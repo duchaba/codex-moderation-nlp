@@ -1,8 +1,44 @@
 # Moderation NLP Server
 
-Server-side JSON API for text moderation using the OpenAI moderation model.
-The app has no UI. It accepts JSON input, calls OpenAI moderation, and returns
-JSON output with category scores and summary fields.
+This project is a lightweight server-side API for text moderation. It accepts a
+JSON message, sends the text to the OpenAI moderation model, and returns a JSON
+response with category scores, a highest-risk category, and clear flag fields
+that an application can use for routing, review, alerts, or automated policy
+decisions.
+
+The goal is simple: help companies understand risky text before it becomes a
+customer, employee, legal, or brand-safety problem.
+
+### Why Moderation Matters
+Enterprise software now handles large amounts of user-generated and
+employee-generated text: support tickets, chat messages, emails, comments,
+reviews, internal collaboration, marketplace posts, and AI assistant inputs.
+Some of that text can include threats, harassment, hate, sexual content,
+self-harm signals, violent language, or other material that needs careful
+handling.
+
+Without moderation, companies often discover risk too late. A harmful message
+may reach a customer, create a workplace safety issue, violate platform policy,
+or require expensive manual review after the damage is already done.
+Moderation provides organizations with an early-warning layer. It helps teams identify
+what needs attention, prioritize human review, and respond consistently.
+
+### Why I Created It
+
+This is part of the [AI Solution Architect](https://elvtr.com/blog/interview-duc-haba) 
+course by [ELVTR](https://elvtr.com/) and [Duc Haba](https://duchaba.com). I want
+to share it with the class, and you are welcome to make it your own. 
+
+As the project name implies, a **master programmer** used **Codex** to create
+this repo. 
+
+‣ .... .- .--. .--. -.--
+
+# Architecture System Diagram
+
+![Architecture Diagram](images/architecture-diagram.png)
+
+‣ .... .- .--. .--. -.--
 
 ## Files
 
@@ -17,6 +53,12 @@ JSON output with category scores and summary fields.
 - Python 3.9 or newer.
 - An OpenAI API key.
 - Internet access from the server so the app can call the OpenAI API.
+
+## Architecture Logic Diagram for the app.py file:
+
+![Architecture Diagram](images/app-logic-diagram.png)
+
+‣ .... .- .--. .--. -.--
 
 ## Install Locally
 
@@ -36,6 +78,7 @@ cd "/Users/duchaba/Documents/moderation nlp"
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+‣ .... .- .--. .--. -.--
 
 ## Configure
 
@@ -60,6 +103,8 @@ export OPENAI_API_KEY="your-api-key"
 
 Do not commit `.env`. It is ignored by `.gitignore`.
 
+‣ .... .- .--. .--. -.--
+
 ## Run The App
 
 Start the server:
@@ -82,6 +127,8 @@ Interactive API documentation is available at:
 http://localhost:8000/docs
 ```
 
+‣ .... .- .--. .--. -.--
+
 ## API Endpoints
 
 ### Health Check
@@ -99,6 +146,8 @@ Successful response:
   "status": "ok"
 }
 ```
+
+‣ .... .- .--. .--. -.--
 
 ### Moderate Text
 
@@ -165,6 +214,8 @@ Response fields:
 - `safer_value`: Threshold used for `is_safer_flagged`.
 - `message`: Original input text.
 
+‣ .... .- .--. .--. -.--
+
 ## Test Without Starting A Server
 
 You can test the moderation function directly from Python:
@@ -174,6 +225,8 @@ cd "/Users/duchaba/Documents/moderation nlp"
 source .venv/bin/activate
 python -c "from app import moderate_text; import json; print(json.dumps(moderate_text('hello world'), indent=2))"
 ```
+
+‣ .... .- .--. .--. -.--
 
 ## Test With The Running Server
 
@@ -199,6 +252,8 @@ curl -X POST http://localhost:8000/moderate \
   -d '{"message":"hello world","safer":0.0005}'
 ```
 
+‣ .... .- .--. .--. -.--
+
 ## Validate Syntax
 
 Run a Python syntax check:
@@ -209,6 +264,8 @@ PYTHONPYCACHEPREFIX=/private/tmp/moderation_pycache .venv/bin/python -m py_compi
 
 The `PYTHONPYCACHEPREFIX` value keeps Python cache files out of system folders
 that may not be writable in restricted environments.
+
+‣ .... .- .--. .--. -.--
 
 ## Docker
 
@@ -230,6 +287,8 @@ Test it:
 curl http://localhost:8000/health
 ```
 
+‣ .... .- .--. .--. -.--
+
 ## Deployment Notes
 
 Run the app behind your server process manager with:
@@ -247,11 +306,14 @@ For production:
 - Put a reverse proxy such as Nginx or a platform load balancer in front if
   you need TLS, custom domains, or traffic management.
 
+‣ .... .- .--. .--. -.--
+
 ## Codex Development And Pull Request Workflow
 
 Use this section if you want to start your own Codex development work from
 this repository, test your changes, and ask for a pull request to merge back
 into the main repo.
+
 
 ### 1. Fork The Repository
 
@@ -267,6 +329,7 @@ for example:
 ```text
 https://github.com/YOUR-USERNAME/codex-moderation-nlp
 ```
+
 
 ### 2. Clone Your Fork
 
@@ -313,6 +376,7 @@ Add a new endpoint that returns the configured moderation model name.
 Review app.py for bugs and suggest improvements.
 ```
 
+
 ### 4. Create A Development Branch
 
 Before changing code, create a branch:
@@ -330,6 +394,7 @@ feature/add-tests
 fix/error-response
 docs/update-readme
 ```
+
 
 ### 5. Install And Configure The App
 
@@ -355,6 +420,7 @@ OPENAI_API_KEY=your-api-key
 
 Never commit `.env`.
 
+
 ### 6. Make Your Changes With Codex
 
 Ask Codex to make one focused change at a time. After Codex edits files,
@@ -369,6 +435,7 @@ Run the app locally when the change affects behavior:
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8000
 ```
+
 
 ### 7. Create Or Update Tests
 
@@ -406,6 +473,7 @@ curl -X POST http://localhost:8000/moderate \
   -d '{"message":"hello world","safer":0.0005}'
 ```
 
+
 ### 8. Commit Your Work
 
 Check what changed:
@@ -427,6 +495,8 @@ Commit with a clear message:
 git commit -m "Add moderation API tests"
 ```
 
+
+
 ### 9. Push Your Branch
 
 Push your branch to your fork:
@@ -434,6 +504,7 @@ Push your branch to your fork:
 ```bash
 git push origin feature/my-change
 ```
+
 
 ### 10. Open A Pull Request
 
@@ -472,6 +543,7 @@ Testing:
 - pytest
 ```
 
+
 ### 11. Keep Your Fork Updated
 
 Before starting new work, sync your fork with the original repo:
@@ -483,6 +555,8 @@ git merge upstream/main
 git push origin main
 ```
 
+‣ .... .- .--. .--. -.--
+
 ## Troubleshooting
 
 ### `OPENAI_API_KEY environment variable is required`
@@ -493,10 +567,12 @@ The app cannot find an API key. Add it to `.env` or export it in the shell:
 export OPENAI_API_KEY="your-api-key"
 ```
 
+
 ### `Moderation request failed: Connection error`
 
 The server could not reach OpenAI. Check internet access, DNS, firewall rules,
 and whether outbound HTTPS is allowed.
+
 
 ### `422 Unprocessable Entity`
 
@@ -509,6 +585,7 @@ The JSON request body is invalid. Make sure `message` exists and is not empty:
 }
 ```
 
+
 ### Port Already In Use
 
 Run on another port:
@@ -516,3 +593,12 @@ Run on another port:
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8001
 ```
+
+‣ .... .- .--. .--. -.--
+
+# Legal
+
+- This repository is protected by the [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+
+
+END OF DOC

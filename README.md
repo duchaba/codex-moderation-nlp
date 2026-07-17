@@ -247,6 +247,242 @@ For production:
 - Put a reverse proxy such as Nginx or a platform load balancer in front if
   you need TLS, custom domains, or traffic management.
 
+## Codex Development And Pull Request Workflow
+
+Use this section if you want to start your own Codex development work from
+this repository, test your changes, and ask for a pull request to merge back
+into the main repo.
+
+### 1. Fork The Repository
+
+Open the GitHub repository:
+
+```text
+https://github.com/duchaba/codex-moderation-nlp
+```
+
+Click `Fork` in GitHub. This creates your own copy under your GitHub account,
+for example:
+
+```text
+https://github.com/YOUR-USERNAME/codex-moderation-nlp
+```
+
+### 2. Clone Your Fork
+
+Clone your fork to your local computer:
+
+```bash
+git clone https://github.com/YOUR-USERNAME/codex-moderation-nlp.git
+cd codex-moderation-nlp
+```
+
+Add the original repository as `upstream` so you can pull future updates:
+
+```bash
+git remote add upstream https://github.com/duchaba/codex-moderation-nlp.git
+git remote -v
+```
+
+You should see:
+
+```text
+origin    https://github.com/YOUR-USERNAME/codex-moderation-nlp.git
+upstream  https://github.com/duchaba/codex-moderation-nlp.git
+```
+
+### 3. Open The Project In Codex
+
+Open Codex and select the cloned project folder:
+
+```text
+codex-moderation-nlp
+```
+
+Tell Codex what you want to change. Example prompts:
+
+```text
+Add pytest tests for the moderation API.
+```
+
+```text
+Add a new endpoint that returns the configured moderation model name.
+```
+
+```text
+Review app.py for bugs and suggest improvements.
+```
+
+### 4. Create A Development Branch
+
+Before changing code, create a branch:
+
+```bash
+git checkout main
+git pull upstream main
+git checkout -b feature/my-change
+```
+
+Use a short branch name that describes the work, such as:
+
+```text
+feature/add-tests
+fix/error-response
+docs/update-readme
+```
+
+### 5. Install And Configure The App
+
+Create a virtual environment and install dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Create your local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```bash
+OPENAI_API_KEY=your-api-key
+```
+
+Never commit `.env`.
+
+### 6. Make Your Changes With Codex
+
+Ask Codex to make one focused change at a time. After Codex edits files,
+review the diff:
+
+```bash
+git diff
+```
+
+Run the app locally when the change affects behavior:
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+### 7. Create Or Update Tests
+
+For code changes, add tests that prove the behavior works. A common starting
+point is a `tests/` folder with API tests for:
+
+- `GET /health`
+- valid `POST /moderate` input
+- invalid `POST /moderate` input
+- moderation output summary fields
+
+If `pytest` is added to the project, run:
+
+```bash
+pytest
+```
+
+For the current app, always run the built-in checks:
+
+```bash
+PYTHONPYCACHEPREFIX=/private/tmp/moderation_pycache .venv/bin/python -m py_compile app.py
+```
+
+Test the health endpoint:
+
+```bash
+curl http://localhost:8000/health
+```
+
+Test moderation:
+
+```bash
+curl -X POST http://localhost:8000/moderate \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hello world","safer":0.0005}'
+```
+
+### 8. Commit Your Work
+
+Check what changed:
+
+```bash
+git status
+git diff
+```
+
+Stage only the files that belong in the pull request:
+
+```bash
+git add app.py README.md tests
+```
+
+Commit with a clear message:
+
+```bash
+git commit -m "Add moderation API tests"
+```
+
+### 9. Push Your Branch
+
+Push your branch to your fork:
+
+```bash
+git push origin feature/my-change
+```
+
+### 10. Open A Pull Request
+
+Go to your fork on GitHub and click `Compare & pull request`.
+
+Set the pull request target to:
+
+```text
+base repository: duchaba/codex-moderation-nlp
+base branch: main
+```
+
+Set the source branch to your fork branch:
+
+```text
+head repository: YOUR-USERNAME/codex-moderation-nlp
+compare branch: feature/my-change
+```
+
+In the pull request description, include:
+
+- What changed.
+- Why the change was made.
+- How you tested it.
+- Any follow-up work or known limitations.
+
+Example:
+
+```text
+Summary:
+- Added tests for the health endpoint and moderation validation.
+- Added mocked OpenAI client coverage for moderation summary fields.
+
+Testing:
+- PYTHONPYCACHEPREFIX=/private/tmp/moderation_pycache .venv/bin/python -m py_compile app.py
+- pytest
+```
+
+### 11. Keep Your Fork Updated
+
+Before starting new work, sync your fork with the original repo:
+
+```bash
+git checkout main
+git fetch upstream
+git merge upstream/main
+git push origin main
+```
+
 ## Troubleshooting
 
 ### `OPENAI_API_KEY environment variable is required`
